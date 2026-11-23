@@ -9,7 +9,7 @@ Docente: Ing. Lizbeth Jaico Quispe.
 | Integrante | Cuenta de GitHub |
 |---|---|
 | Oré Mischa, Kengy Samir | [KengySamir27](https://github.com/KengySamir27) |
-| Conde Flores, Jefferson | _(completar)_ |
+| Conde Flores Jefferson Cesar | [Jefferson-Conde](https://github.com/Jefferson-Conde) |
 | Huicho Solier, Frank Felix | _(completar)_ |
 
 ## Descripción
