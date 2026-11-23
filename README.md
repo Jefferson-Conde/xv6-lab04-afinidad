@@ -28,40 +28,46 @@ Este proyecto lo extiende, sobre el commit base `9e3161a`, con:
 
 El informe completo, la presentación y las evidencias están en la carpeta [`documento_TrabajoFinal`](documento_TrabajoFinal/).
 
-## Requisitos
+## Requisitos e instalación
 
-- Ubuntu (se desarrolló en Ubuntu sobre WSL2 con Windows).
-- Paquetes: `git`, `build-essential`, `gdb-multiarch`, `qemu-system-misc`, `gcc-riscv64-linux-gnu`, `binutils-riscv64-linux-gnu`.
+Necesitas GCC y binutils cruzados para RISC-V de 64 bits, QEMU 7.2 o superior, GNU Make, Perl y `bc`.
+El compilador GCC del anfitrión se usa para construir `mkfs`.
+
+### Arch Linux y Artix Linux (x86_64)
+
+```bash
+sudo pacman -Syu --needed base-devel git bc perl qemu-system-riscv \
+    riscv64-linux-gnu-gcc riscv64-linux-gnu-binutils
+```
+
+En Arch, el compilador y QEMU se encuentran en `extra`. En Artix, comprueba `world` con
+`pacman-conf --repo-list` y consulta todos los paquetes con
+`pacman -Si qemu-system-riscv riscv64-linux-gnu-gcc riscv64-linux-gnu-binutils`.
+QEMU se ejecuta como aplicación de usuario en cualquiera de las variantes de Artix.
+
+### Debian y Ubuntu
 
 ```bash
 sudo apt update
-sudo apt install git build-essential gdb-multiarch qemu-system-misc \
-    gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu
+sudo apt install git build-essential bc perl gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu qemu-system-misc
 ```
 
-## Instalación
+## Compilar y arrancar
+
+Desde la raíz de tu copia del repositorio:
 
 ```bash
-git clone https://github.com/KengySamir27/so-xv6-afinidad.git
-cd so-xv6-afinidad
+make -j"$(nproc)" TOOLPREFIX=riscv64-linux-gnu- kernel/kernel fs.img
+make qemu CPUS=4 TOOLPREFIX=riscv64-linux-gnu-
 ```
 
-La etiqueta `base-xv6` marca el commit original de xv6-riscv. Para ver exactamente qué se cambió:
+El primer comando construye el kernel y la imagen de disco. El segundo arranca QEMU con cuatro CPUs.
+Dentro de xv6, ejecuta `cpustat`, `taskset -c 1 hog 10` y `schedtest`.
+Para volver a Linux, pulsa **Ctrl+A** y luego **X**.
 
-```bash
-git diff base-xv6 main --stat
-```
-
-## Compilación y ejecución
-
-```bash
-make qemu CPUS=4
-```
-
-Esto compila el kernel y los programas de usuario, y arranca xv6 en QEMU con cuatro CPUs. Deben aparecer tres mensajes
-`hart N starting` y el prompt `$`. Para salir de QEMU: `Ctrl+A` y luego `X`.
-
-Para limpiar los archivos generados: `make clean`.
+En Arch también puedes usar `riscv64-elf-gcc` y `riscv64-elf-binutils` con `TOOLPREFIX=riscv64-elf-`.
+La etiqueta `base-xv6` marca el punto de partida. Los cambios de la implementación se pueden revisar con
+`git diff --stat base-xv6 HEAD -- Makefile kernel user`.
 
 ## Uso
 
